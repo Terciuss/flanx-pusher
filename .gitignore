@@ -12,3 +12,6 @@ yarn-error.log
 *.log
 .DS_Store
 Thumbs.db 
+.phpunit.cache
+/coverage
+coverage.xml

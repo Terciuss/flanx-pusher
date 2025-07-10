@@ -44,8 +44,8 @@ class WebSocketDaemonCommand extends Command
 
     private function initializeParameters(): void
     {
-        $this->appUuid = $this->option('app-uuid') ?: config('websocket.connections.native.app_uuid');
-        $this->token = $this->option('token') ?: config('websocket.connections.native.app_token');
+        $this->appUuid = $this->option('app-uuid') ?: config('websocket.connections.native.app_uuid') ?: '';
+        $this->token = $this->option('token') ?: config('websocket.connections.native.app_token') ?: '';
         $this->host = $this->option('host');
         $this->port = (int) $this->option('port');
         $this->redisChannel = $this->option('redis-channel');
