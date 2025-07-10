@@ -113,6 +113,10 @@ class CustomHandler implements MessageHandlerInterface
 - GitHub: [@Terciuss](https://github.com/Terciuss)
 - Email: mr.terks@yandex.ru
 
+## Связанные проекты
+
+- **[flanx-pusher-client](https://www.npmjs.com/package/flanx-pusher-client)** - Клиентская библиотека для JavaScript/TypeScript с поддержкой WebSocket соединений и Pusher-совместимого протокола.
+
 ## Лицензия
 
 MIT License. Смотрите файл [LICENSE](LICENSE) для получения дополнительной информации. 
