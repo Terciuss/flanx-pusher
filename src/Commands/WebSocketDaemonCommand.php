@@ -10,7 +10,7 @@ use React\EventLoop\Factory;
 
 class WebSocketDaemonCommand extends Command
 {
-    protected $signature = 'websocket:daemon {--app-uuid=} {--token=} {--host=localhost} {--port=6001} {--redis-channel=websocket-events}';
+    protected $signature = 'websocket:daemon {--app-uuid=} {--token=} {--host=localhost} {--port=6001} {--redis-channel=websocket-events} {--worker-id=}';
     protected $description = 'Запускает daemon для подключения к WebSocket серверу и обработки событий из Redis';
 
     private string $appUuid;
@@ -18,6 +18,7 @@ class WebSocketDaemonCommand extends Command
     private string $host;
     private int $port;
     private string $redisChannel;
+    private string $workerId;
     private $loop;
     protected WebSocketConnection $connection;
     protected MessageHandlerManager $webSocketHandlerManager;
@@ -32,7 +33,7 @@ class WebSocketDaemonCommand extends Command
             return 1;
         }
 
-        $this->info("Запуск WebSocket daemon для приложения: {$this->appUuid}");
+        $this->info("Запуск WebSocket daemon для приложения: {$this->appUuid} (Worker: {$this->workerId})");
 
         $this->setupEventLoop();
         $this->setupHandlers();
@@ -49,6 +50,7 @@ class WebSocketDaemonCommand extends Command
         $this->host = $this->option('host');
         $this->port = (int) $this->option('port');
         $this->redisChannel = $this->option('redis-channel');
+        $this->workerId = $this->option('worker-id') ?: uniqid(); // Генерируем worker_id, если не указан
     }
 
     private function validateParameters(): bool
@@ -110,7 +112,7 @@ class WebSocketDaemonCommand extends Command
     {
         $path = "/api/v1/apps/{$this->appUuid}/events?api_key={$this->token}";
 
-        $this->info("Подключение к WebSocket серверу: {$this->host}:{$this->port}{$path}");
+        $this->info("Подключение к WebSocket серверу: {$this->host}:{$this->port}{$path} (Worker: {$this->workerId})");
 
         $this->connection = new WebSocketConnection(
             $this->host,
@@ -145,12 +147,12 @@ class WebSocketDaemonCommand extends Command
 
     private function setupEventProcessor(): void
     {
-        $this->eventProcessor = new EventProcessor($this->eventHandlerManager, $this->loop, $this->redisChannel);
+        $this->eventProcessor = new EventProcessor($this->eventHandlerManager, $this->loop, $this->redisChannel, $this->workerId);
         
         // Запускаем обработку событий
         $this->loop->addTimer(0.1, function () {
             try {
-                $this->info("Запуск обработки событий из Redis канала: {$this->redisChannel}");
+                $this->info("Запуск обработки событий из Redis канала: {$this->redisChannel} (Worker: {$this->workerId})");
                 $this->eventProcessor->start();
             } catch (\Exception $e) {
                 $this->warn("Не удалось запустить обработку событий Redis: " . $e->getMessage());
@@ -191,9 +193,11 @@ class WebSocketDaemonCommand extends Command
 
     private function reconnect(): void
     {
-        $this->warn("Переподключение через 5 секунд");
+        // Добавляем случайную задержку для избежания одновременных переподключений
+        $delay = 5 + rand(0, 5); // 5-10 секунд
+        $this->warn("Переподключение через {$delay} секунд (Worker: {$this->workerId})");
 
-        $this->loop->addTimer(5, function () {
+        $this->loop->addTimer($delay, function () {
             $this->setupConnection();
         });
     }

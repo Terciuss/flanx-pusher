@@ -5,17 +5,14 @@ namespace Terciuss\FlanxPusher\Contracts;
 interface WebSocketEventInterface
 {
     /**
-     * Получить тип события для WebSocket
+     * Get the channels the event should broadcast on.
+     *
+     * @return \Illuminate\Broadcasting\Channel|\Illuminate\Broadcasting\Channel[]|string[]|string
      */
-    public function getWebSocketEventType(): string;
+    public function broadcastOn();
 
     /**
-     * Получить данные для отправки через WebSocket
+     * @return mixed
      */
-    public function getWebSocketData(): array;
-
-    /**
-     * Получить канал для отправки (опционально)
-     */
-    public function getWebSocketChannels(): array;
+    public function broadcastWith();
 } 
