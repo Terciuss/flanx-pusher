@@ -17,5 +17,5 @@ interface WebSocketEventInterface
     /**
      * Получить канал для отправки (опционально)
      */
-    public function getWebSocketChannels(): ?string;
+    public function getWebSocketChannels(): array;
 } 
