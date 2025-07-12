@@ -29,5 +29,6 @@ return [
     
     'event_handlers' => [
         // 'universal.event' => \Terciuss\FlanxPusher\Handlers\UniversalEventHandler::class,
+        '*' => \Terciuss\FlanxPusher\Handlers\DefaultEventHandler::class,
     ],
 ];

@@ -15,11 +15,15 @@ class MessageHandlerManager
 
     public function handle(array $data): void
     {
-        foreach ($this->handlers as $handler) {
-            if ($handler->canHandle($data)) {
-                $handler->handle($data);
-                return;
-            }
+        $key = $data['event_type'] ?? null;
+        $handler = $this->handlers[$key] ?? null;
+
+        if(!$handler) {
+            $handler = $this->handlers['*'] ?? null;
+        }
+
+        if($handler) {
+            $handler->handle($data);
         }
     }
 
