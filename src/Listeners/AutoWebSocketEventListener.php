@@ -28,7 +28,7 @@ class AutoWebSocketEventListener
                 EventProcessor::publishEvent([
                     'event_type' => $name,
                     'event_data' => $event->broadcastWith(),
-                    'channel' => $userId ? null : $channel,
+                    'channel' => $channel,
                     'user_id' => $userId,
                     'timestamp' => now()->toISOString(),
                 ]);
