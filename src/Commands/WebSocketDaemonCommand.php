@@ -83,7 +83,7 @@ class WebSocketDaemonCommand extends Command
         foreach ($handlers as $type => $handlerClass) {
             if (class_exists($handlerClass)) {
                 $handler = new $handlerClass($tempConnection);
-                $this->webSocketHandlerManager->addHandler($handler);
+                $this->webSocketHandlerManager->addHandler($type, $handler);
             }
         }
         
@@ -93,7 +93,7 @@ class WebSocketDaemonCommand extends Command
         foreach ($eventHandlers as $type => $handlerClass) {
             if (class_exists($handlerClass)) {
                 $handler = new $handlerClass($tempConnection);
-                $this->eventHandlerManager->addHandler($handler);
+                $this->eventHandlerManager->addHandler($type, $handler);
             }
         }
     }

@@ -8,9 +8,9 @@ class MessageHandlerManager
 {
     private array $handlers = [];
 
-    public function addHandler(MessageHandlerInterface $handler): void
+    public function addHandler(string $key, MessageHandlerInterface $handler): void
     {
-        $this->handlers[] = $handler;
+        $this->handlers[$key] = $handler;
     }
 
     public function handle(array $data): void
