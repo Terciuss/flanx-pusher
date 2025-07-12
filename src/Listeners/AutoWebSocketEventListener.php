@@ -18,13 +18,15 @@ class AutoWebSocketEventListener
     {
         // Проверяем, что событие реализует WebSocketEventInterface
         if ($event instanceof WebSocketEventInterface) {
-            // Отправляем событие в Redis для обработки WebSocket Daemon
-            EventProcessor::publishEvent([
-                'event_type' => $event->getWebSocketEventType(),
-                'event_data' => $event->getWebSocketData(),
-                'channel' => $event->getWebSocketChannel(),
-                'timestamp' => now()->toISOString(),
-            ]);
+            foreach ($event->getWebSocketChannels() as $channel) {
+                // Отправляем событие в Redis для обработки WebSocket Daemon
+                EventProcessor::publishEvent([
+                    'event_type' => $event->getWebSocketEventType(),
+                    'event_data' => $event->getWebSocketData(),
+                    'channel' => $channel,
+                    'timestamp' => now()->toISOString(),
+                ]);
+            }
         }
     }
 } 
