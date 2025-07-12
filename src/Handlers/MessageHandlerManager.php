@@ -15,7 +15,7 @@ class MessageHandlerManager
 
     public function handle(array $data): void
     {
-        $key = $data['event_type'] ?? null;
+        $key = $data['type'] ?? null;
         $handler = $this->handlers[$key] ?? null;
 
         if(!$handler) {
