@@ -22,11 +22,14 @@ class AutoWebSocketEventListener
                 ? $event->broadcastAs() : get_class($event);
 
             foreach ($event->broadcastOn() as $channel) {
+                $channel = (string)$channel;
+                $userId = method_exists($event, 'getUserId') ? $event->getUserId($channel) : null;
                 // Отправляем событие в Redis для обработки WebSocket Daemon
                 EventProcessor::publishEvent([
                     'event_type' => $name,
                     'event_data' => $event->broadcastWith(),
-                    'channel' => (string)$channel,
+                    'channel' => $channel,
+                    'user_id' => $userId,
                     'timestamp' => now()->toISOString(),
                 ]);
             }
