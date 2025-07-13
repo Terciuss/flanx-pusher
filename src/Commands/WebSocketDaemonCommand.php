@@ -2,6 +2,7 @@
 
 namespace Terciuss\FlanxPusher\Commands;
 
+use Illuminate\Support\Facades\Log;
 use Terciuss\FlanxPusher\Events\EventProcessor;
 use Terciuss\FlanxPusher\Handlers\MessageHandlerManager;
 use Terciuss\FlanxPusher\WebSocket\WebSocketConnection;
@@ -176,6 +177,7 @@ class WebSocketDaemonCommand extends Command
 
         } catch (\Exception $e) {
             $this->error("Ошибка обработки сообщения: " . $e->getMessage());
+            Log::error($e);
         }
     }
 

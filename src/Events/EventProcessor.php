@@ -37,10 +37,7 @@ class EventProcessor
         try {
             $this->isRunning = true;
             $this->redisConnection = Redis::connection();
-            
-            $workerInfo = $this->workerId ? " (Worker: {$this->workerId})" : '';
-            Log::info("Запуск обработки событий Redis через pub/sub канал: {$this->redisChannel}{$workerInfo}");
-            
+
             // Используем таймер для периодической проверки Redis pub/sub
             $this->timer = $this->loop->addPeriodicTimer(0.1, function () {
                 $this->checkRedisPubSub();
@@ -48,7 +45,8 @@ class EventProcessor
             
         } catch (\Exception $e) {
             $workerInfo = $this->workerId ? " (Worker: {$this->workerId})" : '';
-            Log::error("Ошибка запуска обработки событий Redis{$workerInfo}: " . $e->getMessage());
+            Log::error("Ошибка запуска обработки событий Redis{$workerInfo}");
+            Log::error($e);
             $this->isRunning = false;
         }
     }
@@ -69,7 +67,8 @@ class EventProcessor
             
         } catch (\Exception $e) {
             $workerInfo = $this->workerId ? " (Worker: {$this->workerId})" : '';
-            Log::error("Ошибка проверки событий Redis pub/sub{$workerInfo}: " . $e->getMessage());
+            Log::error("Ошибка проверки событий Redis pub/sub{$workerInfo}");
+            Log::error($e);
         }
     }
 
@@ -92,7 +91,8 @@ class EventProcessor
 
         } catch (\Exception $e) {
             $workerInfo = $this->workerId ? " (Worker: {$this->workerId})" : '';
-            Log::error("Ошибка обработки события из Redis{$workerInfo}: " . $e->getMessage());
+            Log::error("Ошибка обработки события из Redis{$workerInfo}");
+            Log::error($e);
         }
     }
 
@@ -108,7 +108,8 @@ class EventProcessor
             // Отправляем событие в очередь для обработки воркерами
             $redis->lpush('websocket-events:queue', $jsonData);
         } catch (\Exception $e) {
-            Log::error('Ошибка отправки события в Redis: ' . $e->getMessage());
+            Log::error('Ошибка отправки события в Redis');
+            Log::error($e);
         }
     }
 

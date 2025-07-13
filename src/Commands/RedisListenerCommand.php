@@ -29,6 +29,7 @@ class RedisListenerCommand extends Command
             
         } catch (\Exception $e) {
             $this->error("Ошибка подключения к Redis: " . $e->getMessage());
+            Log::error($e);
             return 1;
         }
     }
@@ -50,6 +51,7 @@ class RedisListenerCommand extends Command
             
         } catch (\Exception $e) {
             $this->error("Ошибка обработки сообщения: " . $e->getMessage());
+            Log::error($e);
         }
     }
 } 
