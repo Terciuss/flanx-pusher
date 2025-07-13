@@ -2,7 +2,7 @@
 
 namespace Terciuss\FlanxPusher\Handlers;
 
-class MessageSentHandler extends AbstractHandler
+class MessageSentHandler extends DefaultEventHandler
 {
     public function handle(array $data): void
     {
@@ -11,10 +11,5 @@ class MessageSentHandler extends AbstractHandler
             'type' => 'message.sent',
             'data' => []
         ]);
-    }
-
-    public function canHandle(array $data): bool
-    {
-        return isset($data['type']) && $data['type'] === 'message.sent';
     }
 }

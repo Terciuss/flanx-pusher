@@ -23,14 +23,13 @@ class AutoWebSocketEventListenerTest extends TestCase
         $event->shouldReceive('getWebSocketEventType')->andReturn('test.event');
         $event->shouldReceive('getWebSocketData')->andReturn(['message' => 'test']);
         $event->shouldReceive('getWebSocketChannel')->andReturn('test-channel');
+        $event->shouldReceive('broadcastAs')->andReturn('test.event');
+        $event->shouldReceive('broadcastOn')->andReturn(['test-channel']);
+        $event->shouldReceive('broadcastWith')->andReturn(['message' => 'test']);
         
-        // Мокаем Redis для избежания ошибок
-        $mockRedis = Mockery::mock('alias:Illuminate\Support\Facades\Redis');
-        $mockRedis->shouldReceive('connection')->andReturnSelf();
-        $mockRedis->shouldReceive('lpush')->andReturn(true);
-        
-        // Не должно вызывать исключение
+        // Просто проверяем, что метод не вызывает исключение
         $this->listener->handle($event);
+        $this->assertTrue(true);
     }
 
     public function testHandleWithNonWebSocketEvent()

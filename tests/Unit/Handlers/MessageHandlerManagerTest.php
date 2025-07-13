@@ -21,11 +21,11 @@ class MessageHandlerManagerTest extends TestCase
     {
         $handler = Mockery::mock(MessageHandlerInterface::class);
         
-        $this->manager->addHandler($handler);
+        $this->manager->addHandler('test', $handler);
         
         $handlers = $this->manager->getHandlers();
         $this->assertCount(1, $handlers);
-        $this->assertSame($handler, $handlers[0]);
+        $this->assertSame($handler, $handlers['test']);
     }
 
     public function testHandleWithMatchingHandler()
@@ -36,7 +36,7 @@ class MessageHandlerManagerTest extends TestCase
         $handler->shouldReceive('canHandle')->with($data)->once()->andReturn(true);
         $handler->shouldReceive('handle')->with($data)->once();
         
-        $this->manager->addHandler($handler);
+        $this->manager->addHandler('test', $handler);
         $this->manager->handle($data);
         
         // Проверяем, что метод был вызван
@@ -51,7 +51,7 @@ class MessageHandlerManagerTest extends TestCase
         $handler->shouldReceive('canHandle')->with($data)->once()->andReturn(false);
         $handler->shouldNotReceive('handle');
         
-        $this->manager->addHandler($handler);
+        $this->manager->addHandler('test', $handler);
         $this->manager->handle($data);
         
         // Проверяем, что метод был вызван
@@ -63,7 +63,7 @@ class MessageHandlerManagerTest extends TestCase
         $data = ['type' => 'test', 'message' => 'hello'];
         
         $handler1 = Mockery::mock(MessageHandlerInterface::class);
-        $handler1->shouldReceive('canHandle')->with($data)->once()->andReturn(false);
+        $handler1->shouldNotReceive('canHandle');
         $handler1->shouldNotReceive('handle');
         
         $handler2 = Mockery::mock(MessageHandlerInterface::class);
@@ -74,9 +74,9 @@ class MessageHandlerManagerTest extends TestCase
         $handler3->shouldNotReceive('canHandle');
         $handler3->shouldNotReceive('handle');
         
-        $this->manager->addHandler($handler1);
-        $this->manager->addHandler($handler2);
-        $this->manager->addHandler($handler3);
+        $this->manager->addHandler('handler1', $handler1);
+        $this->manager->addHandler('test', $handler2);
+        $this->manager->addHandler('handler3', $handler3);
         
         $this->manager->handle($data);
         
@@ -84,7 +84,20 @@ class MessageHandlerManagerTest extends TestCase
         $this->assertTrue(true);
     }
 
-
+    public function testHandleWithWildcardHandler()
+    {
+        $data = ['type' => 'unknown', 'message' => 'hello'];
+        
+        $wildcardHandler = Mockery::mock(MessageHandlerInterface::class);
+        $wildcardHandler->shouldReceive('canHandle')->with($data)->once()->andReturn(true);
+        $wildcardHandler->shouldReceive('handle')->with($data)->once();
+        
+        $this->manager->addHandler('*', $wildcardHandler);
+        $this->manager->handle($data);
+        
+        // Проверяем, что метод был вызван
+        $this->assertTrue(true);
+    }
 
     protected function tearDown(): void
     {

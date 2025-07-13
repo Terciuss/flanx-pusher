@@ -6,6 +6,7 @@ use Terciuss\FlanxPusher\Contracts\MessageHandlerInterface;
 
 class MessageHandlerManager
 {
+    /** @var MessageHandlerInterface[] */
     private array $handlers = [];
 
     public function addHandler(string $key, MessageHandlerInterface $handler): void
@@ -22,7 +23,7 @@ class MessageHandlerManager
             $handler = $this->handlers['*'] ?? null;
         }
 
-        if($handler) {
+        if($handler && $handler->canHandle($data)) {
             $handler->handle($data);
         }
     }
